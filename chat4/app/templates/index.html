@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>thi is a template</h1>
+
+
+    <script>
+        var ws = new WebSocket('ws://localhost:8000/ws/ac/')
+
+       
+        {% comment %} ws.onopen = function(){
+            console.log('WebSocket connection open...')
+            ws.send('Hi sms from client site')
+        } {% endcomment %}
+        
+        {% comment %} ws.onmessage = function(event){
+            console.log('SMS received efrom server...', event)
+        }
+        ws.onerror = function(event){
+            console.log('websocket error occurred...', event)
+        }
+
+        ws.onclose = function(event){
+            console.log('websocket connection closed..', event)
+        } {% endcomment %}
+
+
+
+        ws.addEventListener('open', () =>{
+            console.log('WebSocket connection open...')
+            ws.send('Hi sms from client site')
+        })
+        ws.addEventListener('message', (event) =>{
+            console.log('SMS received from server...', event)
+            
+        })
+        ws.addEventListener('error', (event) =>{
+            console.log('websocket error occurred...', event)
+            
+        })
+        ws.addEventListener('close', (event) =>{
+            console.log('websocket connection closed..', event)
+            
+        })
+
+
+
+
+    </script>
+</body>
+</html>

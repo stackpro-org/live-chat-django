@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body> 
+  
+    <textarea id="chat-log" cols="100" rows="20"></textarea> <br/>
+    <input type="text" id="chat-sms-input" size="100">
+    <input type="button" value="send" id="chat-sms-submit">
+    <h1 id="ctg"></h1>
+
+
+
+    <script>
+        var ws = new WebSocket('ws://localhost:8000/ws/ac/')
+
+       
+        ws.onopen = function(){
+            console.log('WebSocket connection open...')
+            ws.send('Hi sms from client site')  
+        } 
+        
+        
+        // data is received here from client and server
+        ws.onmessage = function(event){
+            console.log('EVENT', event)
+            console.log('SMS received efrom server...', event.data)
+            console.log('data type...', typeof(event.data))
+            var data = JSON.parse(event.data)  // string to js opject
+            console.log('new data type', typeof(data))
+            document.getElementById('ctg').innerText = data.msg
+            document.querySelector('#chat-log').value+=(data.msg+ '\n')
+        }
+        ws.onerror = function(event){
+            console.log('websocket error occurred...', event)
+        }
+
+        ws.onclose = function(event){
+            console.log('websocket connection closed..', event)
+        } 
+
+        document.getElementById('chat-sms-submit').onclick=
+           function(event){
+               const messageInputDom = document.getElementById('chat-sms-input')
+
+               const message = messageInputDom.value
+           
+
+               ws.send(JSON.stringify({
+                'msg': message
+            }))
+               messageInputDom.value = ''
+               
+              
+             }
+
+
+        
+
+        {% comment %} ws.addEventListener('open', () =>{
+            console.log('WebSocket connection open...')
+            ws.send('Hi sms from client site')
+        })
+        ws.addEventListener('message', (event) =>{
+            console.log('SMS received from server...', event)
+            
+        })
+        ws.addEventListener('error', (event) =>{
+            console.log('websocket error occurred...', event)
+              
+        })
+        ws.addEventListener('close', (event) =>{
+            console.log('websocket connection closed..', event)
+            
+        }) {% endcomment %}
+         
+
+
+    </script>
+</body>
+</html>
