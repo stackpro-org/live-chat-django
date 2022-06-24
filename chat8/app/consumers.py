@@ -112,8 +112,9 @@ class MySyConsumer(SyncConsumer):
             'type':'websocket.send',
             'text': event['message']
         })
-         
-    
+
+    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
+
     def websocket_disconnect(self, event):
         print('websocket disconnected...', event)
         print("Channel Layer......", self.channel_layer)
