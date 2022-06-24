@@ -113,7 +113,7 @@ class MySyConsumer(SyncConsumer):
             'text': event['message']
         })
 
-    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
+
 
     def websocket_disconnect(self, event):
         print('websocket disconnected...', event)
