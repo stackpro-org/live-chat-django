@@ -18,6 +18,11 @@ def index(request, group_name):
             }
     return render(request, 'index.html', context=context)
 
+def live_chat(request):
+
+
+    return render(request, 'live_chat.html')
+
 
 def home(request):
 
@@ -28,5 +33,6 @@ def home(request):
 
         }
 
-
     return render(request, 'home.html', context)
+
+
