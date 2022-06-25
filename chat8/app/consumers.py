@@ -1,6 +1,5 @@
 #-----------authentication
 import json
-from time import sleep
 from channels.consumer import AsyncConsumer, SyncConsumer
 from channels.exceptions import StopConsumer
 import asyncio
@@ -9,13 +8,11 @@ from channels.db import database_sync_to_async
 from asgiref.sync import async_to_sync
 
 class MySyConsumer(SyncConsumer):
-
     def websocket_connect(self, event):
         print('websocket connected...', event)
         print("Channel Layer......", self.channel_layer) #get default channel layer from a project
         print("Channel name", self.channel_name)# get channel name
         self.group_name = self.scope['url_route']['kwargs']['groupNam']
-
 
        # add a channel to a new or existing group
         async_to_sync(self.channel_layer.group_add)(
@@ -25,45 +22,6 @@ class MySyConsumer(SyncConsumer):
         self.send({
             'type':'websocket.accept'
         })
-    
-    # def websocket_receive(self, event):
-    #     print('Data is server or client',  event['text'])  
-    #     print('Data is type',  type(event['text']))  
-    #     print('envent', event)
-    #     data = json.loads(event['text']) # json str to python Dictionary
-    #     print('The user is...',self.scope['user']) # to see who is the user
-        
-
-    #     group = Group.objects.get(name = self.group_name)
-
-    #     if self.scope['user'].is_authenticated:      
-        
-    #         chat = Chat(
-    #             content=data['msg'],
-    #             group = group
-    #         )
-    #         chat.save()
-
-    #         # added to the coder group
-    #         async_to_sync(self.channel_layer.group_send)(self.group_name, { 
-    #             'type': 'chat.message',
-    #             'message': event['text']
-    #         })
-        
-    #     else:
-    #         self.send({
-    #             'type':'websocket.send',
-    #             'text': json.dumps({"msg": "Login Reguired"}) # py dic to json str
-    #         })
-    # def chat_message(self, event):
-    #     print('event.....', event)
-    #     print('Actual data', event['message'])
-    #     print('Actual data type', type(event['message']))
-
-    #     self.send({
-    #         'type':'websocket.send',
-    #         'text': event['message']
-    #     })
 
 
     def websocket_receive(self, event):
@@ -71,6 +29,8 @@ class MySyConsumer(SyncConsumer):
         print('Data is type',  type(event['text']))  
         print('envent', event)
         data = json.loads(event['text']) # json str to python Dictionary
+
+
         print('The user is...',self.scope['user']) # to see who is the user
         
 
@@ -129,12 +89,15 @@ class MySyConsumer(SyncConsumer):
 
 class MyAsyConsumer(AsyncConsumer):
 
+    # if code is connected, never get back to the connection def again during the cheating
     async def websocket_connect(self, event):
         print('websocket connected...', event)
         print("Channel Layer......", self.channel_layer) #get default channel layer from a project
         print("Channel name", self.channel_name)# get channel name
+        print('user............', self.scope['user'])
+
         self.group_name = self.scope['url_route']['kwargs']['groupNam']
-        print('scope..................',self.group_name)
+
 
        # add a channel to a new or existing group
         await self.channel_layer.group_add(
@@ -144,14 +107,19 @@ class MyAsyConsumer(AsyncConsumer):
         await self.send({
             'type':'websocket.accept'
         })
-    
+
+
+
+   # receive def just receive data from client site
     async def websocket_receive(self, event):
-        print('Data is server or client',  event['text'])  
-        print('Data is server or client',  type(event['text']))  
+        print('Data is from server or client',  event['text'])
+        print('Data is from server or client',  type(event['text']))
 
         data = json.loads(event['text']) # json str to python Dictionary
+
+        print('python dictionary...........', data)
         print('The user is...',self.scope['user']) # to see who is the user
-        
+
         
         group = await database_sync_to_async(Group.objects.get)(name = self.group_name)
         if self.scope['user'].is_authenticated:
@@ -163,7 +131,7 @@ class MyAsyConsumer(AsyncConsumer):
 
             data['user'] = self.scope['user'].username
 
-            # added to the coder group
+            # added to the group
             await self.channel_layer.group_send(self.group_name, { 
                 'type': 'chat.message',
                 'message': json.dumps(data)
@@ -173,6 +141,9 @@ class MyAsyConsumer(AsyncConsumer):
                 'type':'websocket.send',
                 'text': json.dumps({"msg": "Login Reguired"}) # py dic to json str
             })
+
+
+    # chat_message def just send data to client site
     async def chat_message(self, event):
         print('event.....', event)
         print('Actual data', event['message'])
@@ -182,8 +153,8 @@ class MyAsyConsumer(AsyncConsumer):
             'type':'websocket.send',
             'text': event['message']
         })
-         
-    
+
+    # if code is disconnected, disconnection def will work
     async def websocket_disconnect(self, event):
         print('websocket disconnected...', event)
         print("Channel Layer......", self.channel_layer)

@@ -22,8 +22,6 @@
     <h1>{{groupname|json_script:"group-name"}}</h1>
 
 
-
-
     <script>
         const groupName = JSON.parse(document.getElementById('group-name').textContent)
         //var ws = new WebSocket('ws://localhost:8000/ws/ac/')
@@ -31,7 +29,7 @@
         var ws = new WebSocket(
             'ws://'
             + window.location.host
-            +'/ws/sy/'
+            +'/ws/ac/'
             + groupName
             +'/'
             )
@@ -45,7 +43,7 @@
         } 
         
         
-        // data is received here from client and server
+        // data is received here from server
         ws.onmessage = function(event){
             console.log('EVENT', event)
             console.log('SMS received efrom server...', event.data)
@@ -65,13 +63,16 @@
             console.log('websocket connection closed..', event)
         } 
 
+
+        //from here we send sms to server and server process it according to requirements
+
         document.getElementById('chat-sms-submit').onclick=
            function(event){
                const messageInputDom = document.getElementById('chat-sms-input')
 
                const message = messageInputDom.value
-           
 
+               console.log('message.............', message)
                ws.send(JSON.stringify({
                 'msg': message
             }))
@@ -80,8 +81,6 @@
               
              }
 
-
-        
 
         {% comment %} ws.addEventListener('open', () =>{
             console.log('WebSocket connection open...')
@@ -92,6 +91,7 @@
             
         })
         ws.addEventListener('error', (event) =>{
+
             console.log('websocket error occurred...', event)
               
         })
