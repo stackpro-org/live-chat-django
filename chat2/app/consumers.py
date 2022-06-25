@@ -6,11 +6,11 @@ class MySyConsumer(SyncConsumer):
 
     def websocket_connect(self, event):
         print('websocket connected...', event)
-
         self.send({
             'type':'websocket.accept'
         })
-    
+
+
     def websocket_receive(self, event):
         print('Data is ',  event['text'])
     
